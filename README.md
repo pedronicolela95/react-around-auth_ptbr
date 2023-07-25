@@ -1,8 +1,25 @@
-Around the U.S. project on React, featuring authorization and registration.
+# Projeto 15:  Around the World
 
-This repository will contain your own front-end project on React with added authorization and registration features.
-Start working with your previously built front end code from Sprint 12.
+### Visão geral
 
-All authorization, registration and token requests must go through to the server running on [https://register.nomoreparties.co](https://register.nomoreparties.co/).
+- Autor
+- Introdução
+- Objetivos
+- Tecnologias utilizadas
+- Imagens
 
-Good luck!
+**Autor**
+Pedro Nicolela em julho de 2023.
+
+**Introdução**
+Nesse projetos construimos uma tela semelhante a uma rede social, em que os usuários compartilham fotos. Para acessá-la o usuário precisa realizar o login e, caso ele ainda não tenha sido registrado, ele pode se registrar.
+
+**Objetivos**
+Projeto objetiva aplicar os conceitos de Autenticação e Autorização Front-End a partir de uma API fornecida pelo próprio Bootcamp
+
+**Tecnologias utilizadas**
+Foram utilizadas HTML, CSS, JS e o framework React
+
+**Imagens**
+
+Imagens foram obtidas pelo próprio Bootcamp através de URLs fornecidas

@@ -12,4 +12,8 @@
   border-bottom: 1px solid rgba(84, 84, 84, 0.7); /* converting #545454 with opacity 0.7 to rgba */
 
   box-sizing: border-box; /* using it to prevent border to count in header's height */
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

@@ -1,8 +1,15 @@
 import React from "react";
+import { Route, Switch, withRouter, useHistory } from "react-router-dom";
+
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
+import Register from "./Register";
+import Login from "./Login";
+import ProtectedRoute from "./ProtectedRoute";
+
 import api from "../utils/api";
+
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 function App() {
@@ -13,10 +20,18 @@ function App() {
   const [isImagePopupOpen, setImagePopupOpen] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState("");
   const [currentUser, setCurrentUser] = React.useState("");
+  const [InfoTooltipOpen, setInfoTooltipOpen] = React.useState(false);
   const [cards, setCards] = React.useState([]);
+  const [isLoggedIn, setLoggedIn] = React.useState(true);
+  const [email, setEmail] = React.useState("test@email.com");
+  const history = useHistory();
 
   function handleEditAvatarClick() {
     setEditAvatarPopupOpen(true);
+  }
+
+  function handleAuthResponse() {
+    setInfoTooltipOpen(true);
   }
 
   function handleEditProfileClick() {
@@ -37,6 +52,7 @@ function App() {
     setEditAvatarPopupOpen(false);
     setEditProfilePopupOpen(false);
     setAddPlacePopupOpen(false);
+    setInfoTooltipOpen(false);
     setSelectedCard("");
   }
 
@@ -61,6 +77,13 @@ function App() {
         console.log(err);
       });
   }, []);
+
+  const handleSignOut = () => {
+    // Your sign-out logic here
+    // For example, reset the email and set isLoggedIn to false
+    setEmail("");
+    setLoggedIn(false);
+  };
 
   function handleUpdateUser(profileInfo) {
     api
@@ -118,28 +141,43 @@ function App() {
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Header />
-      <Main
-        isEditProfilePopupOpen={isEditProfilePopupOpen}
-        isAddPlacePopupOpen={isAddPlacePopupOpen}
-        isEditAvatarPopupOpen={isEditAvatarPopupOpen}
-        handleEditAvatarClick={handleEditAvatarClick}
-        handleEditProfileClick={handleEditProfileClick}
-        handleAddPlaceClick={handleAddPlaceClick}
-        closeAllPopups={closeAllPopups}
-        isImagePopupOpen={isImagePopupOpen}
-        handleCardClick={handleCardClick}
-        selectedCard={selectedCard}
-        handleUpdateUser={handleUpdateUser}
-        handleUpdateAvatar={handleUpdateAvatar}
-        cards={cards}
-        onCardLike={handleCardLike}
-        onCardDelete={handleDeleteCard}
-        handleAddNewCard={handleAddNewCard}
-      />
+      <Header email={email} onSignOut={handleSignOut} />
+      <Switch history={history}>
+        <Route exact path="/signup">
+          <Register
+            isOpen={InfoTooltipOpen}
+            closeAllPopups={closeAllPopups}
+            handleAuthResponse={handleAuthResponse}
+          />
+        </Route>
+        <Route exact path="/signin">
+          <Login />
+        </Route>
+        <ProtectedRoute
+          path="/"
+          loggedIn={isLoggedIn}
+          component={Main}
+          isEditProfilePopupOpen={isEditProfilePopupOpen}
+          isAddPlacePopupOpen={isAddPlacePopupOpen}
+          isEditAvatarPopupOpen={isEditAvatarPopupOpen}
+          handleEditAvatarClick={handleEditAvatarClick}
+          handleEditProfileClick={handleEditProfileClick}
+          handleAddPlaceClick={handleAddPlaceClick}
+          closeAllPopups={closeAllPopups}
+          isImagePopupOpen={isImagePopupOpen}
+          handleCardClick={handleCardClick}
+          selectedCard={selectedCard}
+          handleUpdateUser={handleUpdateUser}
+          handleUpdateAvatar={handleUpdateAvatar}
+          cards={cards}
+          onCardLike={handleCardLike}
+          onCardDelete={handleDeleteCard}
+          handleAddNewCard={handleAddNewCard}
+        />
+      </Switch>
       <Footer />
     </CurrentUserContext.Provider>
   );
 }
 
-export default App;
+export default withRouter(App);
