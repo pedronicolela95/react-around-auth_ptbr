@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { register } from "../utils/auth.js";
 import InfoTooltip from "./InfoTooltip.js";
-import { withRouter } from "react-router-dom";
+import { withRouter, useHistory } from "react-router-dom";
 
 function Register(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSuccess, setSuccess] = useState(false);
+
+  const history = useHistory();
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -36,7 +38,7 @@ function Register(props) {
   const handleClosePopup = () => {
     props.closeAllPopups();
     if (isSuccess) {
-      props.history.push("/signin");
+      history.push("/signin");
     }
   };
 
@@ -46,6 +48,7 @@ function Register(props) {
         isSuccess={isSuccess}
         isOpen={props.isOpen}
         name="register"
+        isLogin={false}
         onClose={handleClosePopup}
       />
       <form className="login" onSubmit={onRegister}>

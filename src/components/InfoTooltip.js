@@ -3,8 +3,11 @@ import successSymbol from "../images/info_tool_tip/sucess_symbol.svg";
 import closeIconImg from "../images/popup/close-icon.svg";
 
 function InfoTooltip(props) {
+  const sucessMessage = props.isLogin
+    ? "Vitória! Você será redirecionado!"
+    : "Vitória! Você foi registrado com sucesso!";
   const message = props.isSuccess
-    ? "Vitória! Você precisa se registrar."
+    ? sucessMessage
     : "Ops, algo saiu deu errado! Por favor, tente novamente.";
   const symbol = props.isSuccess ? successSymbol : errorSymbol;
   const altMessage = props.isSuccess ? "Imagem de sucesso" : "Imagem de erro";

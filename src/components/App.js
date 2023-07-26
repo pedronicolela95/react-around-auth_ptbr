@@ -24,7 +24,7 @@ function App(props) {
   const [currentUser, setCurrentUser] = React.useState("");
   const [cards, setCards] = React.useState([]);
 
-  const [isLoggedIn, setLoggedIn] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [InfoTooltipOpen, setInfoTooltipOpen] = React.useState(false);
 
@@ -61,15 +61,13 @@ function App(props) {
   }
 
   function authenticateWithToken(token) {
-    console.log(token);
     return authenticate(token)
       .then((res) => {
         setEmail(res.data.email);
-        setLoggedIn(true);
+        setIsLoggedIn(true);
         return res;
       })
       .then((res) => {
-        console.log(isLoggedIn);
         return res;
       })
       .catch((error) => {
@@ -96,7 +94,7 @@ function App(props) {
   function onSignOut() {
     localStorage.removeItem("jwt");
     setEmail("");
-    setLoggedIn(false);
+    setIsLoggedIn(false);
   }
 
   React.useEffect(() => {
@@ -124,8 +122,8 @@ function App(props) {
   React.useEffect(() => {
     authenticateWithToken(localStorage.getItem("jwt"))
       .then((res) => {
-        if (res.ok) {
-          props.history.push("/");
+        if (res.data.email) {
+          history.push("/");
         }
       })
       .catch((err) => {
@@ -190,7 +188,7 @@ function App(props) {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <Header email={email} onSignOut={onSignOut} />
-      <Switch history={history}>
+      <Switch>
         <Route exact path="/signup">
           <Register
             isOpen={InfoTooltipOpen}
