@@ -39,6 +39,7 @@ function AddPlacePopup(props) {
         minLength="2"
         maxLength="30"
         onChange={handleNewCardNameChange}
+        value={newCardName}
       />
       <span className="popup__error title-input-error"></span>
       <input
@@ -47,6 +48,7 @@ function AddPlacePopup(props) {
         id="image-link-input"
         placeholder="Link da imagem"
         onChange={handleNewCardLinkChange}
+        value={newCardLink}
         required
       />
       <span className="popup__error image-link-input-error"></span>
