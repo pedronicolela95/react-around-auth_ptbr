@@ -9,21 +9,25 @@ import Login from "./Login";
 import ProtectedRoute from "./ProtectedRoute";
 
 import api from "../utils/api";
+import { authorize, authenticate } from "../utils/auth";
 
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-function App() {
+function App(props) {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] =
     React.useState(false);
+
   const [isAddPlacePopupOpen, setAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
   const [isImagePopupOpen, setImagePopupOpen] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState("");
   const [currentUser, setCurrentUser] = React.useState("");
-  const [InfoTooltipOpen, setInfoTooltipOpen] = React.useState(false);
   const [cards, setCards] = React.useState([]);
-  const [isLoggedIn, setLoggedIn] = React.useState(true);
-  const [email, setEmail] = React.useState("test@email.com");
+
+  const [isLoggedIn, setLoggedIn] = React.useState(false);
+  const [email, setEmail] = React.useState("");
+  const [InfoTooltipOpen, setInfoTooltipOpen] = React.useState(false);
+
   const history = useHistory();
 
   function handleEditAvatarClick() {
@@ -56,6 +60,45 @@ function App() {
     setSelectedCard("");
   }
 
+  function authenticateWithToken(token) {
+    console.log(token);
+    return authenticate(token)
+      .then((res) => {
+        setEmail(res.data.email);
+        setLoggedIn(true);
+        return res;
+      })
+      .then((res) => {
+        console.log(isLoggedIn);
+        return res;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  }
+
+  function onLogin(email, password) {
+    return authorize(email, password)
+      .then((res) => {
+        localStorage.setItem("jwt", res.token);
+        return res;
+      })
+      .then((res) => {
+        return authenticateWithToken(res.token);
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
+  }
+
+  function onSignOut() {
+    localStorage.removeItem("jwt");
+    setEmail("");
+    setLoggedIn(false);
+  }
+
   React.useEffect(() => {
     api
       .getProfileInfo()
@@ -78,12 +121,17 @@ function App() {
       });
   }, []);
 
-  const handleSignOut = () => {
-    // Your sign-out logic here
-    // For example, reset the email and set isLoggedIn to false
-    setEmail("");
-    setLoggedIn(false);
-  };
+  React.useEffect(() => {
+    authenticateWithToken(localStorage.getItem("jwt"))
+      .then((res) => {
+        if (res.ok) {
+          props.history.push("/");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   function handleUpdateUser(profileInfo) {
     api
@@ -141,7 +189,7 @@ function App() {
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Header email={email} onSignOut={handleSignOut} />
+      <Header email={email} onSignOut={onSignOut} />
       <Switch history={history}>
         <Route exact path="/signup">
           <Register
@@ -151,7 +199,12 @@ function App() {
           />
         </Route>
         <Route exact path="/signin">
-          <Login />
+          <Login
+            onLogin={onLogin}
+            isOpen={InfoTooltipOpen}
+            closeAllPopups={closeAllPopups}
+            handleAuthResponse={handleAuthResponse}
+          />
         </Route>
         <ProtectedRoute
           path="/"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { register } from "../utils/auth.js";
 import InfoTooltip from "./InfoTooltip.js";
 import { withRouter } from "react-router-dom";
@@ -18,16 +18,19 @@ function Register(props) {
 
   const onRegister = (event) => {
     event.preventDefault();
-    register(email, password).then((res) => {
-      setEmail("");
-      setPassword("");
-      if (!res.data) {
-        setSuccess(false);
-      } else {
+    register(email, password)
+      .then((res) => {
+        setEmail("");
+        setPassword("");
         setSuccess(true);
-      }
-      props.handleAuthResponse();
-    });
+      })
+      .catch((error) => {
+        setSuccess(false);
+        console.log(error);
+      })
+      .finally(() => {
+        props.handleAuthResponse();
+      });
   };
 
   const handleClosePopup = () => {

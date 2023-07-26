@@ -7,9 +7,17 @@ function Header(props) {
   let contentHeader = "";
 
   if (currentURL === "/signin") {
-    contentHeader = <h1 className="header__message">Faça Login</h1>;
+    contentHeader = (
+      <a className="header__message" href="/signup">
+        Inscrever-se
+      </a>
+    );
   } else if (currentURL === "/signup") {
-    contentHeader = <h1 className="header__message">Entrar</h1>;
+    contentHeader = (
+      <a className="header__message" href="/signin">
+        Entrar
+      </a>
+    );
   } else {
     contentHeader = (
       <>
